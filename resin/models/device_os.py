@@ -1,6 +1,3 @@
-from sets import Set
-import json
-
 from ..base_request import BaseRequest
 from ..settings import Settings
 from .. import exceptions
