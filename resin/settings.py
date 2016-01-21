@@ -45,15 +45,18 @@ class Settings(object):
         try:
             self.__read_settings()
         except:
-            # Backup old settings file if it exists.
+            # Backup old settings file if it exists and has unparsable data.
             try:
                 if Path.isfile(config_file_path):
-                    shutil.move(config_file_path,
-                                Path.join(self._setting['data_directory'],
-                                          "{0}.{1}".format(self.CONFIG_FILENAME,
-                                                           'old')))
-            except OSError:
-                pass
+                    shutil.move(
+                        config_file_path,
+                        Path.join(
+                            self._setting['data_directory'],
+                            "{0}.{1}".format(self.CONFIG_FILENAME, 'old')
+                        )
+                    )
+            except OSError as e:
+                print("Got OSError: {}".format(e))
             self.__write_settings()
             print(Message.INVALID_SETTINGS.format(path=config_file_path))
 
@@ -76,8 +79,10 @@ class Settings(object):
         options = config_reader.options(self.CONFIG_SECTION)
         for option in options:
             try:
-                config_data[option] = config_reader.get(self.CONFIG_SECTION,
-                                                        option)
+                config_data[option] = config_reader.get(
+                    self.CONFIG_SECTION,
+                    option
+                )
             except:
                 config_data[option] = None
         self._setting = config_data
