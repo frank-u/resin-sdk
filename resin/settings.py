@@ -5,6 +5,7 @@ except ImportError:
 import os.path as Path
 import os
 import shutil
+import time
 
 from . import exceptions
 from .resources import Message
@@ -52,7 +53,10 @@ class Settings(object):
                         config_file_path,
                         Path.join(
                             self._setting['data_directory'],
-                            "{0}.{1}".format(self.CONFIG_FILENAME, 'old')
+                            "{0}.{1}".format(
+                                self.CONFIG_FILENAME,
+                                int(time.time())
+                            )
                         )
                     )
             except OSError as e:
@@ -64,11 +68,11 @@ class Settings(object):
         config = configparser.ConfigParser()
         config.add_section(self.CONFIG_SECTION)
         for key in self._setting:
-            config.set(self.CONFIG_SECTION, key, self._setting[key])
+            config.set(self.CONFIG_SECTION, key, str(self._setting[key]))
         if not Path.isdir(self._setting['data_directory']):
             os.makedirs(self._setting['data_directory'])
         with open(Path.join(self._setting['data_directory'],
-                            self.CONFIG_FILENAME), 'wb') as config_file:
+                            self.CONFIG_FILENAME), 'w') as config_file:
             config.write(config_file)
 
     def __read_settings(self):
